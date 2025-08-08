@@ -9,8 +9,11 @@ const HotCollections = () => {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
 
+
   const API_URL =
     "https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections";
+
+
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -67,13 +70,11 @@ const HotCollections = () => {
               {collections.map((item, index) => (
                 <div className="nft_coll" key={index}>
                   <div className="nft_wrap">
-                    <Link to="/item-details">
-                      <img
-                        src={item.nftImage}
-                        className="lazy img-fluid"
-                        alt={item.title}
-                      />
-                    </Link>
+                   <Link to={`/nft/${item.nftId}`}>
+                  <img src={item.nftImage} 
+                  className="lazy img-fluid" 
+                  alt={item.title} />
+                  </Link>
                   </div>
                   <div className="nft_coll_pp">
                     <Link to="/author">
