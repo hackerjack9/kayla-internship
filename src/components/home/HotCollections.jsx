@@ -4,16 +4,14 @@ import axios from "axios";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "../home/carouselArrows.css";
 
 const HotCollections = () => {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
 
-
   const API_URL =
     "https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections";
-
-
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -34,11 +32,12 @@ const HotCollections = () => {
     dots: false,
     infinite: true,
     speed: 500,
-    slidesToShow: 4, 
+    slidesToShow: 4,
     slidesToScroll: 1,
+    arrows: true, 
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1200,
         settings: { slidesToShow: 3 },
       },
       {
@@ -70,11 +69,13 @@ const HotCollections = () => {
               {collections.map((item, index) => (
                 <div className="nft_coll" key={index}>
                   <div className="nft_wrap">
-                   <Link to={`/nft/${item.nftId}`}>
-                  <img src={item.nftImage} 
-                  className="lazy img-fluid" 
-                  alt={item.title} />
-                  </Link>
+                    <Link to={`/nft/${item.nftId}`}>
+                      <img
+                        src={item.nftImage}
+                        className="lazy img-fluid"
+                        alt={item.title}
+                      />
+                    </Link>
                   </div>
                   <div className="nft_coll_pp">
                     <Link to="/author">
