@@ -6,6 +6,8 @@ import Author from "./pages/Author";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 import ItemDetails from "./pages/ItemDetails";
+import NewItems from "./components/home/NewItems";
+
 
 
 
@@ -19,6 +21,7 @@ function App() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/author" element={<Author />} />
        <Route path="/nft/:id" element={<ItemDetails />} />
+        <Route path="/" element={<NewItems />} />
       </Routes>
       <Footer />
     </Router>
