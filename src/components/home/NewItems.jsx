@@ -5,6 +5,7 @@ import axios from "axios";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../home/carouselArrows.css";
+import "../../css/styles/skeleton.css"; // <-- add skeleton CSS
 
 const NewItems = () => {
   const [items, setItems] = useState([]);
@@ -13,37 +14,8 @@ const NewItems = () => {
   const API_URL =
     "https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems";
 
-  useEffect(() => {
-    axios
-      .get(API_URL)
-      .then((res) => {
-        setItems(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch items:", err);
-        setLoading(false);
-      });
-  }, []);
-
-  // Update countdown every second
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setItems((prevItems) =>
-        prevItems.map((item) => {
-          if (!item.expiryDate) return item;
-
-          const timeLeft = calculateTimeLeft(item.expiryDate);
-          return { ...item, timeLeft };
-        })
-      );
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
   const calculateTimeLeft = (endTime) => {
-    const now = new Date().getTime();
+    const now = Date.now();
     const distance = new Date(endTime).getTime() - now;
 
     if (distance <= 0) {
@@ -56,6 +28,38 @@ const NewItems = () => {
 
     return { hours, minutes, seconds };
   };
+
+  useEffect(() => {
+    axios
+      .get(API_URL)
+      .then((res) => {
+        const initializedItems = res.data.map((item) =>
+          item.expiryDate
+            ? { ...item, timeLeft: calculateTimeLeft(item.expiryDate) }
+            : item
+        );
+        setItems(initializedItems);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch items:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setItems((prevItems) =>
+        prevItems.map((item) =>
+          item.expiryDate
+            ? { ...item, timeLeft: calculateTimeLeft(item.expiryDate) }
+            : item
+        )
+      );
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const settings = {
     dots: false,
@@ -71,16 +75,6 @@ const NewItems = () => {
     ],
   };
 
-  if (loading) {
-    return (
-      <section id="section-items" className="no-bottom">
-        <div className="container text-center">
-          <h4>...Loading</h4>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section id="section-items" className="no-bottom">
       <div className="container">
@@ -92,68 +86,63 @@ const NewItems = () => {
             </div>
           </div>
 
-          <Slider {...settings}>
-            {items.map((item, index) => (
-              <div key={index} className="nft__item">
-                <div className="author_list_pp">
-                  <Link
-                    to={`/author/${item.authorId}`}
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title={`Creator: ${item.author}`}
-                  >
-                    <img
-                      className="lazy"
-                      src={item.authorImage}
-                      alt={item.author}
-                    />
-                    <i className="fa fa-check"></i>
-                  </Link>
+          {loading ? (
+            <Slider {...settings}>
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="nft__item">
+                  <div className="skeleton skeleton-avatar"></div>
+                  <div className="skeleton skeleton-img"></div>
+                  <div className="skeleton skeleton-text"></div>
+                  <div className="skeleton skeleton-text short"></div>
                 </div>
-
-                {/* Countdown */}
-                 {/* Countdown - only show if expiryDate exists */}
-                {item.expiryDate && item.timeLeft && (
-                  <div className="de_countdown">
-                    {item.timeLeft.hours}h {item.timeLeft.minutes}m {item.timeLeft.seconds}s
+              ))}
+            </Slider>
+          ) : (
+            <Slider {...settings}>
+              {items.map((item, index) => (
+                <div key={index} className="nft__item">
+                  <div className="author_list_pp">
+                    <Link to={`/author/${item.authorId}`}>
+                      <img
+                        className="lazy"
+                        src={item.authorImage}
+                        alt={item.author}
+                      />
+                      <i className="fa fa-check"></i>
+                    </Link>
                   </div>
-                )}
 
-                <div className="nft__item_wrap">
-                  <div className="nft__item_extra">
-                    <div className="nft__item_buttons">
-                      <button>Buy Now</button>
-                      <div className="nft__item_share">
-                        <h4>Share</h4>
-                        <a href="#"><i className="fa fa-facebook fa-lg"></i></a>
-                        <a href="#"><i className="fa fa-twitter fa-lg"></i></a>
-                        <a href="#"><i className="fa fa-envelope fa-lg"></i></a>
-                      </div>
+                  {item.expiryDate && item.timeLeft && (
+                    <div className="de_countdown">
+                      {item.timeLeft.hours}h {item.timeLeft.minutes}m{" "}
+                      {item.timeLeft.seconds}s
+                    </div>
+                  )}
+
+                  <div className="nft__item_wrap">
+                    <Link to={`/item-details/${item.id}`}>
+                      <img
+                        src={item.nftImage}
+                        className="lazy nft__item_preview"
+                        alt={item.title}
+                      />
+                    </Link>
+                  </div>
+
+                  <div className="nft__item_info">
+                    <Link to={`/item-details/${item.id}`}>
+                      <h4>{item.title}</h4>
+                    </Link>
+                    <div className="nft__item_price">{item.price} ETH</div>
+                    <div className="nft__item_like">
+                      <i className="fa fa-heart"></i>
+                      <span>{item.likes}</span>
                     </div>
                   </div>
-
-                  <Link to={`/item-details/${item.id}`}>
-                    <img
-                      src={item.nftImage}
-                      className="lazy nft__item_preview"
-                      alt={item.title}
-                    />
-                  </Link>
                 </div>
-
-                <div className="nft__item_info">
-                  <Link to={`/item-details/${item.id}`}>
-                    <h4>{item.title}</h4>
-                  </Link>
-                  <div className="nft__item_price">{item.price} ETH</div>
-                  <div className="nft__item_like">
-                    <i className="fa fa-heart"></i>
-                    <span>{item.likes}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </Slider>
+              ))}
+            </Slider>
+          )}
         </div>
       </div>
     </section>

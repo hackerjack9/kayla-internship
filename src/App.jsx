@@ -7,7 +7,7 @@ import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 import ItemDetails from "./pages/ItemDetails";
 import NewItems from "./components/home/NewItems";
-import AuthorItems from "./components/author/AuthorItems";
+import ExploreItems from "./components/explore/ExploreItems";
 
 
 
@@ -18,12 +18,12 @@ function App() {
     <Router>
       <Nav />
       <Routes>
-        <Route path="/authoritems" element={<AuthorItems />} />
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
-        <Route path="/author" element={<Author />} />
-       <Route path="/nft/:id" element={<ItemDetails />} />
-        <Route path="/" element={<NewItems />} />
+        <Route path="/author/:id" element={<Author />} />
+        <Route path="/item-details/:nftId" element={<ItemDetails />} />
+        <Route path="/newitems" element={<NewItems />} />
+        <Route path="/exploreitems" element={<ExploreItems />} />
       </Routes>
       <Footer />
     </Router>
