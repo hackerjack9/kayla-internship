@@ -4,30 +4,29 @@ import axios from "axios";
 import AuthorItems from "../author/AuthorItems";
 
 const Author = () => {
-  const { id } = useParams();
+  const { id } = useParams(); 
+
   const [author, setAuthor] = useState(null);
   const [nfts, setNfts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching author for ID:", id);
+        // fetch author details
+        const authorRes = await axios.get(
+          `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=${id}`
+        );
 
-        // Call API through proxy (/api) to avoid CORS
-        const authorRes = await axios.get(`/api/authors?author=${id}`);
-        const nftsRes = await axios.get(`/api/authors-nfts?author=${id}`);
+        // fetch NFTs by this author
+        const nftsRes = await axios.get(
+          `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors_nfts?author=${id}`
+        );
 
-        if (!authorRes.data || Object.keys(authorRes.data).length === 0) {
-          setError("Author not found");
-        } else {
-          setAuthor(authorRes.data);
-          setNfts(nftsRes.data || []);
-        }
+        setAuthor(authorRes.data);
+        setNfts(nftsRes.data);
       } catch (err) {
         console.error("Error fetching author data:", err);
-        setError("Author not found");
       } finally {
         setLoading(false);
       }
@@ -36,21 +35,76 @@ const Author = () => {
     fetchData();
   }, [id]);
 
-  if (loading) return <p>Loading author...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p>Loading...</p>;
+  if (!author) return <p>Author not found</p>;
 
   return (
-    <div className="author-page">
-      <div className="author-header">
-        <img src={author.authorImage} alt={author.authorName} />
-        <h2>{author.authorName}</h2>
-      </div>
+    <div id="wrapper">
+      <div className="no-bottom no-top" id="content">
+        <div id="top"></div>
 
-      {nfts.length > 0 ? (
-        <AuthorItems nfts={nfts} />
-      ) : (
-        <p>No NFTs found for this author.</p>
-      )}
+        {/* Banner */}
+        <section
+          id="profile_banner"
+          aria-label="section"
+          className="text-light"
+          style={{
+            background: `url(${author.banner}) top center / cover no-repeat`,
+          }}
+        ></section>
+
+        <section aria-label="section">
+          <div className="container">
+            <div className="row">
+              {/* Author Info */}
+              <div className="col-md-12">
+                <div className="d_profile de-flex">
+                  <div className="de-flex-col">
+                    <div className="profile_avatar">
+                      <img src={author.authorImage} alt={author.authorName} />
+                      <i className="fa fa-check"></i>
+                      <div className="profile_name">
+                        <h4>
+                          {author.authorName}
+                          <span className="profile_username">@{author.tag}</span>
+                          <span id="wallet" className="profile_wallet">
+                            {author.address}
+                          </span>
+                          <button
+                            id="btn_copy"
+                            title="Copy Text"
+                            onClick={() =>
+                              navigator.clipboard.writeText(author.address)
+                            }
+                          >
+                            Copy
+                          </button>
+                        </h4>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="profile_follow de-flex">
+                    <div className="de-flex-col">
+                      <div className="profile_follower">
+                        {author.followers} followers
+                      </div>
+                      <button className="btn-main">Follow</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* NFTs list */}
+              <div className="col-md-12">
+                <div className="de_tab tab_simple">
+                  {/* ✅ pass NFTs into AuthorItems */}
+                  <AuthorItems nfts={nfts} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 };
