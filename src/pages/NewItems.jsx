@@ -11,13 +11,13 @@ const NewItems = () => {
 
   useEffect(() => {
     axios
-      .get("https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems") // your API endpoint
+      .get("https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems")
       .then((res) => {
         setItems(res.data);
         setLoading(false);
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Error fetching new items:", err);
         setLoading(false);
       });
   }, []);
@@ -27,7 +27,7 @@ const NewItems = () => {
     infinite: false,
     speed: 500,
     slidesToShow: 4,
-    slidesToScroll: 1
+    slidesToScroll: 1,
   };
 
   if (loading) return <p>Loading...</p>;
@@ -36,38 +36,38 @@ const NewItems = () => {
     <Slider {...settings}>
       {items.map((nft) => (
         <div key={nft.id} className="nft-card" style={{ position: "relative" }}>
-          {/* Top-left clickable avatar */}
-          <Link to={`/author/${nft.authorID}`}>
+          {/* ✅ Top-left clickable avatar routes to Author page */}
+          <Link to={`/author/${nft.authorId}`}>
             <img
               src={nft.authorImage}
               alt={nft.authorName}
-              className="author-avatar"
+              className="lazy"
               style={{
-                position: "absolute",
-                top: "10px",
-                left: "10px",
                 width: "40px",
                 height: "40px",
                 borderRadius: "50%",
-                cursor: "pointer",
-                border: "2px solid white",
-                zIndex: 2
+                position: "absolute",
+                top: "10px",
+                left: "10px",
+                border: "2px solid #fff",
               }}
             />
           </Link>
 
-          {/* NFT image */}
-          <img
-            src={nft.image}
-            alt={nft.title}
-            style={{
-              width: "100%",
-              borderRadius: "10px",
-              objectFit: "cover"
-            }}
-          />
+          {/* NFT main image */}
+          <Link to={`/item-details/${nft.id}`}>
+            <img
+              src={nft.image}
+              alt={nft.title}
+              style={{
+                width: "100%",
+                borderRadius: "10px",
+                objectFit: "cover",
+              }}
+            />
+          </Link>
 
-          {/* NFT title */}
+          {/* NFT title + price */}
           <h3 style={{ marginTop: "10px" }}>{nft.title}</h3>
           <p>{nft.price} ETH</p>
         </div>
