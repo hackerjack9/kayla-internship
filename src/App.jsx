@@ -1,6 +1,6 @@
 import Home from "./pages/Home";
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Explore from "./pages/Explore";
 import Author from "./pages/Author";
 import Nav from "./components/Nav";
@@ -17,7 +17,9 @@ function App() {
   return (
     <Router>
       <Nav />
+      <Link to="/author"></Link>
       <Routes>
+
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/author/:id" element={<Author />} />

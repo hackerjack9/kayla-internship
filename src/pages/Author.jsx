@@ -1,82 +1,81 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+import AuthorBanner from "../images/author_banner.jpg";
 import AuthorItems from "../author/AuthorItems";
+import { Link } from "react-router-dom";
+import AuthorImage from "../images/author_thumbnail.jpg";
+import axios from "axios";
+import { use } from "react";
 
+
+  
 const Author = () => {
-  const { id } = useParams(); 
-
-  const [author, setAuthor] = useState(null);
-  const [nfts, setNfts] = useState([]);
+  const [authorData, setAuthorData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAuthorData = async () => {
       try {
-        // fetch author details
-        const authorRes = await axios.get(
-          `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=${id}`
-        );
-
-        // fetch NFTs by this author
-        const nftsRes = await axios.get(
-          `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors_nfts?author=${id}`
-        );
-
-        setAuthor(authorRes.data);
-        setNfts(nftsRes.data);
+        const response = await axios.get('https://us-central1-nft-cloud-functions.net/authors?author=73855012'); // Replace with your actual API endpoint
+        setAuthorData(response.data);
       } catch (err) {
-        console.error("Error fetching author data:", err);
+        setError(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [id]);
+    fetchAuthorData();
+  }, []); // The empty dependency array ensures this effect runs only once after the initial render
 
-  if (loading) return <p>Loading...</p>;
-  if (!author) return <p>Author not found</p>;
+  if (loading) {
+    return <div>Loading author data...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
 
   return (
     <div id="wrapper">
       <div className="no-bottom no-top" id="content">
         <div id="top"></div>
 
-        {/* Banner */}
         <section
           id="profile_banner"
           aria-label="section"
           className="text-light"
-          style={{
-            background: `url(${author.banner}) top center / cover no-repeat`,
-          }}
+          data-bgimage="url(images/author_banner.jpg) top"
+          style={{ background: `url(${AuthorBanner}) top` }}
         ></section>
 
         <section aria-label="section">
           <div className="container">
             <div className="row">
-              {/* Author Info */}
               <div className="col-md-12">
                 <div className="d_profile de-flex">
                   <div className="de-flex-col">
                     <div className="profile_avatar">
-                      <img src={author.authorImage} alt={author.authorName} />
+
+                    {authorData ? (
+                      <img src={authorData.authorImage} alt="" />
+                    ) : (
+                      <p>Loading author data...</p>
+                    )}
+
+
+                      {/* <img src={AuthorImage} alt="" /> */}
+
                       <i className="fa fa-check"></i>
                       <div className="profile_name">
                         <h4>
-                          {author.authorName}
-                          <span className="profile_username">@{author.tag}</span>
+                          Monica Lucas
+                          <span className="profile_username">@monicaaaa</span>
                           <span id="wallet" className="profile_wallet">
-                            {author.address}
+                            UDHUHWudhwd78wdt7edb32uidbwyuidhg7wUHIFUHWewiqdj87dy7
                           </span>
-                          <button
-                            id="btn_copy"
-                            title="Copy Text"
-                            onClick={() =>
-                              navigator.clipboard.writeText(author.address)
-                            }
-                          >
+                          <button id="btn_copy" title="Copy Text">
                             Copy
                           </button>
                         </h4>
@@ -85,20 +84,18 @@ const Author = () => {
                   </div>
                   <div className="profile_follow de-flex">
                     <div className="de-flex-col">
-                      <div className="profile_follower">
-                        {author.followers} followers
-                      </div>
-                      <button className="btn-main">Follow</button>
+                      <div className="profile_follower">573 followers</div>
+                      <Link to="#" className="btn-main">
+                        Follow
+                      </Link>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* NFTs list */}
               <div className="col-md-12">
                 <div className="de_tab tab_simple">
-                  {/* ✅ pass NFTs into AuthorItems */}
-                  <AuthorItems nfts={nfts} />
+                  <AuthorItems />
                 </div>
               </div>
             </div>
@@ -106,7 +103,10 @@ const Author = () => {
         </section>
       </div>
     </div>
-  );
+    );
+    
+
+
 };
 
 export default Author;
