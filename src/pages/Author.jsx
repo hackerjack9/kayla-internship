@@ -1,41 +1,41 @@
 import React, { useEffect, useState } from "react";
-import AuthorBanner from "../images/author_banner.jpg";
-import AuthorItems from "../author/AuthorItems";
-import { Link } from "react-router-dom";
-import AuthorImage from "../images/author_thumbnail.jpg";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { use } from "react";
+import AuthorItems from "../author/AuthorItems";
+import SkeletonCard from "../components/UI/SkeletonCard";
 
-
-  
 const Author = () => {
-  const [authorData, setAuthorData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { authorId } = useParams();
+  const [author, setAuthor] = useState(null);
 
   useEffect(() => {
-    const fetchAuthorData = async () => {
+    window.scrollTo(0, 0);
+    const fetchAuthor = async () => {
       try {
-        const response = await axios.get('https://us-central1-nft-cloud-functions.net/authors?author=73855012'); // Replace with your actual API endpoint
-        setAuthorData(response.data);
+        const res = await axios.get(
+          `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=${authorId}`
+        );
+        setAuthor(res.data);
       } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching author:", err);
       }
     };
+    fetchAuthor();
+  }, [authorId]);
 
-    fetchAuthorData();
-  }, []); // The empty dependency array ensures this effect runs only once after the initial render
-
-  if (loading) {
-    return <div>Loading author data...</div>;
+  if (!author) {
+    return (
+      <div className="container mt-5">
+        <div className="row">
+          {new Array(8).fill(0).map((_, i) => (
+            <div className="col-lg-3 col-md-6 col-sm-6 mb-4" key={i}>
+              <SkeletonCard />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
 
   return (
     <div id="wrapper">
@@ -46,8 +46,8 @@ const Author = () => {
           id="profile_banner"
           aria-label="section"
           className="text-light"
-          data-bgimage="url(images/author_banner.jpg) top"
-          style={{ background: `url(${AuthorBanner}) top` }}
+          data-bgimage={`url(${author.authorBanner}) top`}
+          style={{ backgroundImage: `url(${author.authorBanner})`, backgroundPosition: "top" }}
         ></section>
 
         <section aria-label="section">
@@ -57,37 +57,27 @@ const Author = () => {
                 <div className="d_profile de-flex">
                   <div className="de-flex-col">
                     <div className="profile_avatar">
-
-                    {authorData ? (
-                      <img src={authorData.authorImage} alt="" />
-                    ) : (
-                      <p>Loading author data...</p>
-                    )}
-
-
-                      {/* <img src={AuthorImage} alt="" /> */}
-
+                      <img className="lazy" src={author.authorImage} alt={author.name} />
                       <i className="fa fa-check"></i>
                       <div className="profile_name">
                         <h4>
-                          Monica Lucas
-                          <span className="profile_username">@monicaaaa</span>
+                          {author.name}
+                          <span className="profile_username">@{author.tag}</span>
                           <span id="wallet" className="profile_wallet">
-                            UDHUHWudhwd78wdt7edb32uidbwyuidhg7wUHIFUHWewiqdj87dy7
+                            {author.address}
                           </span>
-                          <button id="btn_copy" title="Copy Text">
-                            Copy
-                          </button>
+                          <button id="btn_copy" title="Copy Text">Copy</button>
                         </h4>
                       </div>
                     </div>
                   </div>
+
                   <div className="profile_follow de-flex">
                     <div className="de-flex-col">
-                      <div className="profile_follower">573 followers</div>
-                      <Link to="#" className="btn-main">
-                        Follow
-                      </Link>
+                      <div className="profile_follower">
+                        {author.followers} followers
+                      </div>
+                      <Link to="#" className="btn-main">Follow</Link>
                     </div>
                   </div>
                 </div>
@@ -95,7 +85,7 @@ const Author = () => {
 
               <div className="col-md-12">
                 <div className="de_tab tab_simple">
-                  <AuthorItems />
+                  <AuthorItems authorId={authorId} />
                 </div>
               </div>
             </div>
@@ -103,10 +93,7 @@ const Author = () => {
         </section>
       </div>
     </div>
-    );
-    
-
-
+  );
 };
 
 export default Author;
