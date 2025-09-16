@@ -57,11 +57,11 @@ const Author = () => {
                 <div className="d_profile de-flex">
                   <div className="de-flex-col">
                     <div className="profile_avatar">
-                      <img className="lazy" src={author.authorImage} alt={author.name} />
+                      <img className="lazy" src={author.authorImage} alt={author.authorName} />
                       <i className="fa fa-check"></i>
                       <div className="profile_name">
                         <h4>
-                          {author.name}
+                          {author.authorName}
                           <span className="profile_username">@{author.tag}</span>
                           <span id="wallet" className="profile_wallet">
                             {author.address}

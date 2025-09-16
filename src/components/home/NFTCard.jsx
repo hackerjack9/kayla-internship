@@ -20,7 +20,7 @@ const NFTCard = ({ nft }) => {
       {nft.expiryDate && <TimerCountdown expiryDate={nft.expiryDate} />}
 
       <div className="nft__item_wrap">
-        <Link to={`/item-details/${nft.id}`}>
+        <Link to={`/item-details/${nft.nftId}`}>
           <img
             src={nft.nftImage}
             className="lazy nft__item_preview"
