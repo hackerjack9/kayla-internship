@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import AuthorItems from "../author/AuthorItems";
 import SkeletonCard from "../components/UI/SkeletonCard";
+import AuthorBanner from "../images/author_banner.jpg";
 
 const Author = () => {
   const { authorId } = useParams();
@@ -46,8 +47,8 @@ const Author = () => {
           id="profile_banner"
           aria-label="section"
           className="text-light"
-          data-bgimage={`url(${author.authorBanner}) top`}
-          style={{ backgroundImage: `url(${author.authorBanner})`, backgroundPosition: "top" }}
+          data-bgimage="url(images/author_banner.jpg) top"
+          style={{ background: `url(${AuthorBanner}) top` }}
         ></section>
 
         <section aria-label="section">

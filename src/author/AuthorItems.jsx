@@ -6,6 +6,7 @@ import SkeletonCard from "../components/UI/SkeletonCard";
 const AuthorItems = ({ authorId }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const[Authordetails, setAuthordetails] = useState([])
 
   useEffect(() => {
     const fetchAuthorItems = async () => {
@@ -14,6 +15,7 @@ const AuthorItems = ({ authorId }) => {
           `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=${authorId}`
         );
         setItems(res.data.nftCollection);
+        setAuthordetails(res.data);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching author items:", err);
@@ -39,7 +41,7 @@ const AuthorItems = ({ authorId }) => {
     <div className="row">
       {items.map((nft) => (
         <div className="col-lg-3 col-md-6 col-sm-6 mb-4" key={nft.id}>
-          <NFTCard nft={nft} />
+          <NFTCard nft={nft} Authordetails={Authordetails} />
         </div>
       ))}
     </div>

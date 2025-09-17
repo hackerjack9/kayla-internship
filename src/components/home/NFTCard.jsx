@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import TimerCountdown from "../TimerCountdown.jsx";
 
-const NFTCard = ({ nft }) => {
+const NFTCard = ({ nft, Authordetails }) => {
   return (
     <div className="nft__item">
       <div className="author_list_pp">
@@ -12,7 +12,7 @@ const NFTCard = ({ nft }) => {
           data-bs-placement="top"
           title={`Creator: ${nft.author}`}
         >
-          <img className="lazy" src={nft.authorImage} alt={nft.author} />
+          <img className="lazy" src={Authordetails.authorImage} alt={nft.author} />
           <i className="fa fa-check"></i>
         </Link>
       </div>
