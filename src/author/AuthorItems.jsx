@@ -13,7 +13,7 @@ const AuthorItems = ({ authorId }) => {
         const res = await axios.get(
           `https://us-central1-nft-cloud-functions.cloudfunctions.net/authors?author=${authorId}`
         );
-        setItems(res.data);
+        setItems(res.data.nftCollection);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching author items:", err);
