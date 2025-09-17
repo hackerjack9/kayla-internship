@@ -1,18 +1,15 @@
-// yo hago un carrusel reutilizable con react-slick + skeleton de carga
-
 import React, { useEffect, useMemo, useState } from "react";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";           // yo cargo CSS base de slick
-import "slick-carousel/slick/slick-theme.css";     // yo cargo CSS tema de slick
+import "slick-carousel/slick/slick.css";           
+import "slick-carousel/slick/slick-theme.css";   
 
-import { NFTs } from "../data/nfts";               // yo traigo mis datos
-import NFTCard from "./NFTCard";                   // yo pinto cada tarjeta
-import "./carousel.css";                           // yo aplico espaciado + flechas
+import { NFTs } from "../data/nfts";              
+import NFTCard from "./NFTCard";                   
+import "./carousel.css";                          
 
-import SkeletonCard from "./UI/SkeletonCard";      // yo muestro skeleton mientras carga
-import "./UI/skeleton.css";                        // yo cargo el CSS del shimmer
+import SkeletonCard from "./UI/SkeletonCard";     
+import "./UI/skeleton.css";                        
 
-// yo dejo que slick me pase className/style para posicionar bien las flechas
 const NextArrow = ({ className, style, onClick }) => (
   <button
     className={className}
@@ -36,28 +33,28 @@ const PrevArrow = ({ className, style, onClick }) => (
 );
 
 export default function NFTCarousel() {
-  // yo uso 6 ítems dinámicos
+
   const items = useMemo(() => NFTs.slice(0, 6), []);
 
-  // --- Estado de carga (skeleton) ------------------------------------------
+ 
   const [loading, setLoading] = useState(true);
 
-  // yo pre-cargo imágenes y garantizo un mínimo de 300ms de skeleton
+ 
   useEffect(() => {
-    const MIN = 300;                         // yo puedo ajustar 250–350ms
+    const MIN = 300;                        
     const t0 = performance.now();
 
-    // yo recojo todas las imágenes a precargar (grande + avatar)
+
     const urls = items.flatMap(i => [i.nftImage, i.authorImage]).filter(Boolean);
 
-    // si no hay nada que precargar, respeto igual el mínimo
+
     if (!urls.length) {
       const wait = Math.max(0, MIN - (performance.now() - t0));
       const id = setTimeout(() => setLoading(false), wait);
       return () => clearTimeout(id);
     }
 
-    let alive = true;                        // yo evito setState tras unmount
+    let alive = true;                    
     let loaded = 0;
     const timers = [];
 
@@ -67,7 +64,7 @@ export default function NFTCarousel() {
       timers.push(id);
     };
 
-    // yo precargo cada imagen (éxito o error cuentan como “hecha”)
+  
     urls.forEach(src => {
       const img = new Image();
       img.src = src;
@@ -77,37 +74,37 @@ export default function NFTCarousel() {
       };
     });
 
-    // yo limpio timeouts si el componente se desmonta
+   
     return () => {
       alive = false;
       timers.forEach(clearTimeout);
     };
   }, [items]);
 
-  // --- Configuración del slider --------------------------------------------
+ 
   const settings = {
-    arrows: true,             // yo activo flechas
+    arrows: true,           
     dots: false,
     infinite: true,
     speed: 500,
-    slidesToShow: 4,          // desktop
+    slidesToShow: 4,       
     slidesToScroll: 1,
-    autoplay: true,           // opcional
+    autoplay: true,       
     autoplaySpeed: 2500,
     pauseOnHover: true,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } }, // tablet
-      { breakpoint: 640,  settings: { slidesToShow: 1 } }  // móvil
+      { breakpoint: 1024, settings: { slidesToShow: 2 } }, 
+      { breakpoint: 640,  settings: { slidesToShow: 1 } } 
     ]
   };
 
-  // --- Render ---------------------------------------------------------------
+ 
   return (
     <div className="carousel-wrap" aria-busy={loading}>
       {loading ? (
-        // yo muestro 4 skeletons para simular el carrusel inicial
+       
         <div className="skeleton-grid">
           {[...Array(4)].map((_, i) => <SkeletonCard key={i} />)}
         </div>
