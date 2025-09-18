@@ -2,18 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import AuthorImage from "../../images/author_thumbnail.jpg";
-import AOS from 'aos';
-import 'aos/dist/aos.css'; // You can also use <link> for styles
-
 
 const Countdown = ({ expiryDate }) => {
   const [timeLeft, setTimeLeft] = useState("");
-
-  useEffect(() => {
-    AOS.init({
-      duration: 1000,
-    });
-  }, []);
 
   useEffect(() => {
     if (!expiryDate) return;
@@ -110,7 +101,7 @@ const ExploreItems = () => {
         <div
           key={item.id}
           className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"
-          data-aos="fade-right" data-aos-duration="1000"
+          data-aos="fade-in" data-aos-duration="1000"
           style={{ display: "block", backgroundSize: "cover" }}
         >
           <div className="nft__item">
