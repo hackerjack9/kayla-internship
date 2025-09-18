@@ -52,11 +52,11 @@ const HotCollections = () => {
   };
 
   return (
-    <section id="section-collections" className="no-bottom">
+    <section id="section-collections" className="no-bottom"  data-aos="fade-in-up" data-aos-duration="3000">
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
-            <div className="text-center">
+            <div className="text-center" data-aos="fade-in-up" data-aos-duration="1000">
               <h2>Hot Collections</h2>
               <div className="small-border bg-color-2"></div>
             </div>
@@ -65,11 +65,11 @@ const HotCollections = () => {
           {loading ? (
             <p className="text-center">Loading collections...</p>
           ) : (
-            <Slider {...settings}>
+            <Slider {...settings} >
               {collections.map((item, index) => (
                 <div className="nft_coll" key={index}>
                   <div className="nft_wrap">
-                    <Link to={`/nft/${item.nftId}`}>
+                    <Link to={`/item-details/${item.nftId}`}>
                       <img
                         src={item.nftImage}
                         className="lazy img-fluid"
