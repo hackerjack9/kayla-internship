@@ -5,9 +5,13 @@ import AuthorItems from "../author/AuthorItems";
 import SkeletonCard from "../components/UI/SkeletonCard";
 import AuthorBanner from "../images/author_banner.jpg";
 
+
 const Author = () => {
   const { authorId } = useParams();
   const [author, setAuthor] = useState(null);
+  const [followers, setFollowers] = useState(500)
+  const [isFollowing, setIsFollowing] = useState(false);
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -23,6 +27,17 @@ const Author = () => {
     };
     fetchAuthor();
   }, [authorId]);
+ 
+const handleFollow = () => {
+    if (isFollowing) {
+      setFollowers(followers - 1); // unfollow
+    } else {
+      setFollowers(followers + 1); // follow
+    }
+    setIsFollowing(!isFollowing);
+  };
+
+
 
   if (!author) {
     return (
@@ -76,9 +91,11 @@ const Author = () => {
                   <div className="profile_follow de-flex">
                     <div className="de-flex-col">
                       <div className="profile_follower">
-                        {author.followers} followers
+                        {followers} followers
                       </div>
-                      <Link to="#" className="btn-main">Follow</Link>
+                      <button onClick={handleFollow} className="btn-main">
+                        {isFollowing ? "Unfollow" : "Follow"}
+                      </button>
                     </div>
                   </div>
                 </div>
